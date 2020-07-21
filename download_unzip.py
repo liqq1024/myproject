@@ -20,3 +20,43 @@ zf = ZipFile("data/tempfile.zip")
 zf.extractall(path = 'data')
 # close the ZipFile instance
 zf.close()
+
+#method2: Shutil and tempfilePermalink. In previous solution we went into the trouble of saving the temporary 
+#file in /tmp folder. But there is an easy way around in Python Python has a inbuild module called tempfile 
+#that can make a temporary file or folder for and do auto cleanup afterwards. We will use shutil module instead 
+#of zipfile in this example
+
+from tempfile import NamedTemporaryFile
+from shutil import unpack_archive
+from urllib.request import urlopen
+# Download the file from the URL
+zipurl = 'http://zju-capg.org/myo/data/dbb-preprocessed-001.zip'
+with urlopen(zipurl) as zipresp, NamedTemporaryFile() as tfile:
+    tfile.write(zipresp.read())
+    tfile.seek(0)
+    unpack_archive(tfile.name, 'data', format='zip')
+    
+#method3: Unzipping without saving the zipPermalink. 
+#Now this method will not create and save any files. It will directly save the extracted file
+
+from io import BytesIO
+from urllib.request import urlopen
+from zipfile import ZipFile
+zipurl = 'http://zju-capg.org/myo/data/dbb-preprocessed-001.zip'
+with urlopen(zipurl) as zipresp:
+    with ZipFile(BytesIO(zipresp.read())) as zfile:
+        zfile.extractall('data')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
